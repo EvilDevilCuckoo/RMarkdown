@@ -1,0 +1,124 @@
+---
+title: "R Markdown Tutorial"
+author: "William Ryan"
+date: "June 7, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Table of Contents
+
+Topic         | Description                 | Location      
+------------- | -------------               | ------------- 
+Introduction  | Project overview            | [Intro](https://github.com/EvilDevilCuckoo/RMarkdown/blob/master/Intro.Rmd)
+Chapter 1     | Setup, Basic commands       | [Chapter 2](https://github.com/EvilDevilCuckoo/RMarkdown/blob/master/Chapter1.Rmd)  
+Chapter 2     | Package Management          | [Chapter 3](https://github.com/EvilDevilCuckoo/RMarkdown/blob/master/Chapter2.Rmd)
+Chapter 3     | Configuration/Database      | [Chapter 4](https://github.com/EvilDevilCuckoo/RMarkdown/blob/master/Chapter3.Rmd)
+Chapter 4     | Policy Creation Enforcement | [Chapter 4](https://github.com/EvilDevilCuckoo/RMarkdown/blob/master/Chapter4.Rmd)
+Chapter 5     | Footnotes, Formuals, Latex  | [Chapter 5](https://github.com/EvilDevilCuckoo/RMarkdown/blob/master/Chapter5.Rmd)
+Chapter 6     | Tips and Tricks             | [Chapter 6](https://github.com/EvilDevilCuckoo/RMarkdown/blob/master/Chapter6.Rmd)
+
+
+## Introduction
+
+This is a sample of using R Markdown to create useful documentation for your code.  Few things cause as much dismay as lack of clear requirements and poorly documented code.  Ideally, code should be self-documenting but even when the intent is clear, there's a tradeoff between clear code and concise code.
+
+For many years Project Managers would determine productivity by how many lines of code one produced.  But that was very shortsighted. If you inherit code that was written by someone else, all the more so if they are no longer there, being able to quickly understand it and modify it without breaking changes is critical. If you write code that's long and verbose, but it's hard to understand, you invariably cause a net loss in terms of productivity.
+
+Think of it this way, if you write a module that takes two days, but you don't document it, document it poorly or write it in such a way that the intent isn't clear, you may save a day or so. But you'll cost much more than that if someone else needs to maintain it.  And that someone else is often you yourself.  Many developers look at code they wrote previously and have to spend a great deal of time figuring out how it works.
+
+If you don't document code as you go along and try to do it all at once at the end, quality will suffer:
+
+1. You'll forget what some portions of the code do.
+2. You'll generally be much more verbose on newer modules and cover less in older ones
+3. You'll have trouble keeping concenration and the level of detail will vary, often the difference will be substantial.
+4. These issues are usually so pronounced that it'll look like different people wrote the documentation.
+5. It'll take you a lot longer b/c you will have to think things through. If you don't walk through the code you'll invariably leave things out.
+
+Now, compare that to spending a few minutes each time you write a function.  If you do this, you'll spend very little time on each function because it'll be fresh in your head. You'll clearly remember your intent and have a much better view of what is obvious and what isn't. Because you haven't already spent hours writing documentation you'll be able to format the code appropriately and won't feel inclined towards taking shortcuts. In fact in many cases, the same thing that causes you to cut corners on documentation will lead you to adding more detail. Why? Because we get bored. If you've been coding for an hour straight, taking 5 or 10 minutes to write clear and high-value documentation will be a welcome break. You'll have time to proofread what you've written and make sure it's as high quality as your code. 
+
+We are all different but everyone gets bored. When we get bored we tend to go on auto-pilot and convince ourselves that things aren't as important as they are.  If you spend a few minutes each time you write  a function however, you'll be much more likely to add graphics, hyperlinks and format it correctly because it's not an inconvenience, rather it's a welcome reprieve from the monotony of coding.
+
+Remember, when someone reads documentation and something doesn't make sense, the first assumption is that the documentation is correct and their understanding is wrong.  This makes bad documentation or outdated documentation detrimental, worse than no documentation at all.  Breaking out documentation so that it's done just-in-time will allow you to get in a rhythm that ensures you do it right (or at least, better), that it makes sense and that it's proofread.  
+
+Lastly, doing it incrementally lets you augment your build process with development tasks.  The documentation report can be built just like the new code base.  This allows you to keep an accurate and up to date change log that matches the your source code *commits*.  You can add policies to ensure that code is documented and testers can use the documentation to ensure they understand the code.  When done correctly and as part of your *DevOps* pipeline, documentation isn't a chore developers hate and it's very easy to include it in the Quality Assurance process.
+
+Some people may claim they are immune to boredom, that they always put the same amount of effort into each task and that it's easier for them to just do it all at once.  Individually this may be true but it's very unlikely so.  When such claims are made, they may not be aware of the quality differences.  If they are going to truly document it with the same level of attentiveness, it really shouldn't be a problem to do it as they go along. And because doing it incrementally has so many benefits there really needs to be a compelling reason to not do it.  The burden of proof is on the developer to show that they really don't let quality decrease if that's the claim. In my entire career, I started as one of those people that wanted to push it off until the end.  But my documentation quality suffered and I've never seen a single case where the same wasn't true for others. I've never once seen quality increased by doing it all and I've yet to see a case where it was consistently 'as good as' incremental work. Your *Dev Ops* policies may be different but I hope I can show you the benefits of continuous integration for documentation.
+
+## Code Blocks - Package Verification [Groups]
+By setting the *include* parameter you ensure that the code is included.  By setting the *echo* you make sure that the code is displayed as well. In some cases you may not want the code to be shown, this is often the case when you want to display a chart or a graphic element that's based off of the code.  Since this is a walk-through on using *RMarkdown* I'm always going to dispay the code except when I explicitly show you cases where excluding it may make more sense.  As a general rule, if you are using it for illustration purposes, you'll want to set *include* and *echo* parameters to __TRUE__, if you are using the code in production, you'll often set these to __FALSE__. Note that code assist sets these to Capital letters. There are some cases where parameter casing allows either case. Wherever possible you should obviously opt for whatever casing is specified by the environment.
+
+### Warning - Explicitly Set the Repository Source
+Note that in both of the following blocks the __Repository__ parameter is explicitly set. Examing the following two calls:
+``` {r ImplicitRepository}
+# install.packages("lmtest") this will likely fail, it needs to have the URL specified in the repos parameter.
+# *repos="http://cran.rstudio.com/"*
+```
+This is the default way to use install.packages to, install a package.  This is normally sufficient but we are using it to ensure that a package is loaded.  This will look to the default setting in RStudio and you may run into cases where the package that is installed is an older version. You may also encounter a compilation error of: *Error in contrib.url(repos, "source") : Trying to use CRAN without setting a mirror Calls: <Anonymous> ... withVisible -> eval -> eval -> install.packages -> contrib.url *.  If you receive this error it will interfere with the output.  To rememdy it, all you need to do is specifically set the repository location (it may be *CRAN* or it may be another location). I've found that it's easier to just verify the location of the package beforehand and not rely on the default setting. Doing so ensures both that you don't experience this error and that you don't end up with an older version.  Different versions may have different dependencies so you can run into quite a few different problems when doing this.
+
+There are quite a few ways to install packages.  You'll note that the error above is caused by a reference to a mirror. When you using the standard install.packages and a package name, R will look for the package name in the repository.  You can reference the package directly like this:
+
+``` {r InstallPackageDirectly, include=TRUE, echo=TRUE}
+install.packages("https://cran.r-project.org/src/contrib/lmtest_0.9-34.tar.gz", repo=NULL, type="source")
+```
+
+You can also use the GUI by using the tile with the Files|Plots|Packages|Help|Viewer tile and entering the Package name in the Search Box. You can use the *Tools* menu item and select *Install Packages* (Note, you may want to get in the habit of using the *Check for Updates* option to ensure you have the latest packages installed.  This may need to be part of a policy if you are working in a group.  You will want to call this programatically in most cases, which I'll cover shortly)
+
+``` {r InstallPackageDirectly2, include=TRUE, echo=TRUE}
+packageurl <- "https://cran.r-project.org/src/contrib/lmtest_0.9-34.tar.gz"
+install.packages(packageurl, repos=NULL, type="source")
+```
+You may be thinking "All you did in the second one is create a variable and use that in the install command". That's true. In the upcoming sections I'm going to show you a few tricks to store information in a database and retreive it. This lets every developer work from the specified packages.  In doing so, you can ensure that everyone gets the latest information even if it hasn't necessarily been committed yet (I know this is a problem in and of itself. The main reason though is consistency and making it as easy as possible for everyone to do things correctly.  This is just one facet of a solid *DevOps* pipeline).  
+
+The main goal of parameterizing this is that you can easily create a database table that contains a Release version and an effective date. One query looks to find the current version and then a subsequent one looks to every package for that version and it's corresponding location (which may or may not be CRAN).  By using this approach, you can roll back versions that have proven to be problematic and you can ensure that everyone is using the correct version and correct packages. It's a very simple change that assures consistency and makes it harder for people to do things incorrectly than do them correctly. 
+
+We'll expand upon this shortly, and include the corresponding database calls but to give you a basic feel for the approach:
+
+``` {r PackageInsallLoop, include=TRUE, echo=TRUE}
+packageList <- c("https://cran.r-project.org/src/contrib/lmtest_0.9-34.tar.gz", "http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_0.9.1.tar.gz", "https://cran.r-project.org/src/contrib/stringr_1.3.1.tar.gz") #this will be retrieved from a database shortly.
+for(packageUrl in packageList){
+  install.packages(packageUrl, repos=NULL, type="source")
+}
+
+```
+
+``` {r PackageDependencies, include=TRUE, echo=TRUE}
+list.of.packages <- c("lmtest", "readr") 
+# Specify each package that needs to be installed. This not only
+# ensures that each package is always available before referencing but it serves to document the dependencies that the code block needs.
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages, repos="http://cran.rstudio.com/")
+```
+## Code Blocks - Package Verification [Individual]
+Instead of hydrating a data frame and checking if each package is present, you can verify each package incrementally
+as you use it.  These aren't mutually exclusive. In fact it makes sense to use the cumulative approach at the beginning of a project and use the incremental one as you go along.  This may seem like overkill and it may be, but the overhead of doing a check is small. This ends up working like parameter verification at both the calling function and the library level.  Doing this lets you check everything at the onset, and ensures that each module has what it needs as well.
+``` {r IndividualPackages, include=TRUE, echo=TRUE}
+if (!require("lmtest")) {
+  install.packages("lmtest", repos="http://cran.rstudio.com/")
+  library("lmtest")
+}
+```
+
+## Code Blocks - Function Definitions
+``` {r Function Definitions, include = TRUE, echo=TRUE}
+# Functions
+oddValues <- function(x){
+  init <- 0
+  for(n in x){
+    if(n %% 2 == 1){
+      k <- k+1
+    }
+    return(k)
+  }
+}
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
